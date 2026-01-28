@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>学霸直播间 - 密集爆发版</title>
+    <style>
+        :root {
+            --neon-red: #ff0000;
+            --neon-yellow: #ffff00;
+            --neon-blue: #00ccff;
+            --neon-green: #33ff00;
+            --neon-pink: #ff00ff;
+            --neon-orange: #ff9900;
+            --neon-purple: #9d00ff;
+        }
+
+        * { box-sizing: border-box; font-family: "Impact", "Microsoft YaHei", sans-serif; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* 顶部导航通栏 */
+        .header {
+            background: #111;
+            padding: 10px 20px;
+            border-bottom: 3px solid var(--neon-red);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .header-title {
+            font-size: 24px;
+            color: var(--neon-yellow);
+            text-shadow: 2px 2px #ff0000;
+            margin-right: 20px;
+        }
+
+        /* 跑马灯 */
+        .marquee {
+            background: var(--neon-orange);
+            color: #000;
+            font-weight: 900;
+            padding: 5px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            border-bottom: 2px solid #fff;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 15s linear infinite;
+        }
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* 五颜六色的分类筛选区 */
+        .filter-section {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #050505;
+        }
+        .tag-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .row-label {
+            color: #fff;
+            font-weight: bold;
+            min-width: 60px;
+            background: #333;
+            padding: 2px 5px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        /* 极致饱和度的按钮样式 */
+        .btn {
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 900;
+            color: #000;
+            cursor: pointer;
+            border: 2px solid #fff;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn:hover { transform: scale(1.1); filter: brightness(1.2); }
+        
+        .b-blue { background: var(--neon-blue); }
+        .b-green { background: var(--neon-green); }
+        .b-yellow { background: var(--neon-yellow); }
+        .b-pink { background: var(--neon-pink); }
+        .b-orange { background: var(--neon-orange); }
+        .b-purple { background: var(--neon-purple); }
+        .b-red { background: var(--neon-red); color: #fff; }
+
+        /* 视频网格系统 - 自动填充 */
+        .video-grid {
+            display: grid;
+            /* 手机显示2列，平板显示4列，电脑显示更多 */
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .video-card {
+            position: relative;
+            background: #111;
+            aspect-ratio: 9 / 12;
+            border: 1px solid #222;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .video-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+        .card-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 10px;
+            background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 50%);
+        }
+        .card-tag {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--neon-red);
+            font-size: 10px;
+            padding: 2px 6px;
+            font-weight: bold;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--neon-yellow);
+            margin-bottom: 5px;
+        }
+        .card-info {
+            font-size: 11px;
+            color: var(--neon-green);
+        }
+
+        /* 线路切换区 - 巨大彩色按钮 */
+        .route-container {
+            display: flex;
+            padding: 10px;
+            gap: 5px;
+        }
+        .route-big-btn {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 900;
+            border: 3px solid #000;
+        }
+
+        /* 分页器 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 40px 10px;
+        }
+        .page-num {
+            width: 45px;
+            height: 45px;
+            background: var(--neon-red);
+            border: 2px solid #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .next-btn {
+            background: var(--neon-yellow);
+            color: #000;
+            padding: 10px 40px;
+            font-size: 20px;
+            font-weight: 900;
+            border-radius: 10px;
+            border: 3px solid #fff;
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部状态栏 -->
+    <div class="header">
+        <div class="header-title">学习TV·全屏爆发模式</div>
+        <div class="tag-row">
+            <span class="btn b-red">正在直播</span>
+            <span class="btn b-pink">我的关注</span>
+            <span class="btn b-blue">排行榜</span>
+        </div>
+    </div>
+
+    <!-- 跑马灯 -->
+    <div class="marquee">
+        <div class="marquee-content">
+            🚨 紧急通知：距离考试不足30天！本平台已上线10000+套真题！不要再睡了！起来背书！自律改变命运！ 🚨 紧急通知：距离考试不足30天！
+        </div>
+    </div>
+
+    <!-- 五颜六色筛选按钮 -->
+    <section class="filter-section">
+        <div class="tag-row">
+            <span class="row-label">学科 |</span>
+            <span class="btn b-blue">高等数学</span>
+            <span class="btn b-yellow">考研英语</span>
+            <span class="btn b-green">大学物理</span>
+            <span class="btn b-pink">计算机专业课</span>
+            <span class="btn b-orange">马原毛概</span>
+            <span class="btn b-purple">日语N1</span>
+        </div>
+        <div class="tag-row">
+            <span class="row-label">难度 |</span>
+            <span class="btn b-green">零基础入门</span>
+            <span class="btn b-orange">强化提升🔥</span>
+            <span class="btn b-red">地狱冲刺</span>
+            <span class="btn b-blue">期末不挂科</span>
+        </div>
+        <div class="tag-row">
+            <span class="row-label">博主 |</span>
+            <span class="btn b-yellow">考研名师</span>
+            <span class="btn b-pink">清华学霸</span>
+            <span class="btn b-purple">翻译官小王</span>
+            <span class="btn b-green">自律打卡王</span>
+        </div>
+    </section>
+
+    <!-- 线路选择 -->
+    <div class="route-container">
+        <div class="route-big-btn b-green">线路1：高速学习通道</div>
+        <div class="route-big-btn b-blue">线路2：超清资源镜像</div>
+        <div class="route-big-btn b-pink">线路3：海外留学直连</div>
+    </div>
+
+    <!-- 视频网格 (全屏填充) -->
+    <main class="video-grid">
+        <!-- 重复生成的视频卡片 -->
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=1" alt="v">
+            <span class="card-tag">NEW</span>
+            <div class="card-overlay">
+                <div class="card-title">数学建模速成法</div>
+                <div class="card-info">👁️ 1.5w · 🕒 35:00</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=2" alt="v">
+            <span class="card-tag" style="background:var(--neon-green); color:#000">LIVE</span>
+            <div class="card-overlay">
+                <div class="card-title">英语单词暴力记忆</div>
+                <div class="card-info">👁️ 8900 · 🕒 直播中</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=3" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">如何4小时复习一本书</div>
+                <div class="card-info">👁️ 5.2w · 🕒 12:45</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=4" alt="v">
+            <span class="card-tag" style="background:var(--neon-purple)">精品</span>
+            <div class="card-overlay">
+                <div class="card-title">考研数学闭关修炼</div>
+                <div class="card-info">👁️ 2.3w · 🕒 58:20</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=5" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">教资面试全流程</div>
+                <div class="card-info">👁️ 1.1w · 🕒 15:10</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=6" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">深夜伴学：白噪音</div>
+                <div class="card-info">👁️ 3400 · 🕒 03:00:00</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=7" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">C++从入土到入门</div>
+                <div class="card-info">👁️ 9.8w · 🕒 45:10</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=8" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">经济学导论精讲</div>
+                <div class="card-info">👁️ 6700 · 🕒 28:40</div>
+            </div>
+        </div>
+        <!-- 更多重复内容以填充全屏 -->
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=9" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">法考必背金句</div>
+                <div class="card-info">👁️ 4.5w · 🕒 10:00</div>
+            </div>
+        </div>
+        <div class="video-card">
+            <img src="https://picsum.photos/400/600?random=10" alt="v">
+            <div class="card-overlay">
+                <div class="card-title">自律100天挑战</div>
+                <div class="card-info">👁️ 12w · 🕒 20:00</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 分页器 -->
+    <div class="pagination">
+        <span style="font-size: 24px; font-weight: 900; color: #fff;">加载中...</span>
+        <div class="page-num">1</div>
+        <div class="page-num" style="background:#444">2</div>
+        <div class="page-num" style="background:#444">3</div>
+        <div class="page-num" style="background:#444">4</div>
+        <div class="next-btn">下一页翻看更多资料</div>
+    </div>
+
+    <!-- 页脚版权 -->
+    <footer style="background: #111; padding: 30px; text-align: center; color: #666; font-size: 14px; border-top: 1px solid #333;">
+        <p>好好学习 天天向上 · 拒绝低级趣味</p>
+        <p>© 2023 全宇宙学习资源中心</p>
+    </footer>
+
+</body>
+  </html>
